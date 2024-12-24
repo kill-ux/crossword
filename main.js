@@ -2,7 +2,7 @@ const emptyPuzzle = `2001
 0..0
 1000
 0..0`
-const words = ['casa', 'alan', 'ciao', 'anta']
+const words = ['alan','casa', 'ciao', 'anta']
 
 let details = {}
 
@@ -58,17 +58,18 @@ const createGrid = () => {
     return baseGrid
 }
 const isValidSlot = (words, slotLen) => {
-    let count = 0
-    if (slotLen >= 2) {
-        for (let i = 0; i < words.length; i++) {
-            if (slotLen == words[i].length) {
-                count++
-            }
-        }
-        if (count > 0) {
-            return true
-        }
-    }
+    // let count = 0
+    // if (slotLen >= 2) {
+    //     for (let i = 0; i < words.length; i++) {
+    //         if (slotLen == words[i].length) {
+    //             count++
+    //         }
+    //     }
+    //     if (count > 0) {
+    //         return true
+    //     }
+    // }
+    
     return false
 }
 const crosswordSolver = (emptyPuzzle, words) => {
