@@ -1,6 +1,7 @@
 const canPlace = (tab, screen, word, p1, p2, direction) => {
+  console.log(direction)
   if (direction == "row") {
-    console.log("hhh", screen[p2].slice(p2).length);
+    console.log("hhh444", p2 + word.length > screen[p2].slice(p2).length);
     if (p2 + word.length > screen[p2].slice(p2).length) return false;
     for (let i = 0; i < word.length; i++) {
       if (screen[p1][p2 + i] == "." && tab[p1][p2 + i] != word[i]) return false;
@@ -29,6 +30,18 @@ const placeWord = (tab, word, p1, p2, direction) => {
     }
   }
   return backup;
+};
+
+const placeWordBack = (tab, word, p1, p2, direction) => {
+  if (direction == "row") {
+    for (let i = 0; i < word.length; i++) {
+      tab[p1][p2 + i] = ".";
+    }
+  } else {
+    for (let i = 0; i < word.length; i++) {
+      tab[p1 + i][p2] = ".";
+    }
+  }
 };
 
 const append = (array, ...obj) => {
@@ -61,6 +74,9 @@ const groupWord = (screen, list, p1, p2) => {
 //////////////
 
 const solvePuzzle = (tab, words, screen, p1, p2) => {
+  if (p1 == 3) {
+    return true
+  }
   console.log("#################");
   console.log(tab, words, screen, p1, p2);
   console.log("#################");
@@ -94,23 +110,32 @@ const solvePuzzle = (tab, words, screen, p1, p2) => {
   }
 
   console.log("das hna");
-  for (const word of words) {
-    if (canPlace(tab, word, p1, p2, "row")) {
+  let index = 0
+  for (const word of words) {//tab, screen, word, p1, p2, direction
+    if (canPlace(tab, screen, word, p1, p2, "row")) {
       let backup = [];
       let backup1 = [];
       let backup2 = [];
       let res = groupWord(screen, words, p1, p2); // [[casa,ciao][]]
       if (screen[p1][p2] == "2") {
-        backup1 = placeWord(tab, res[0][0], p1, p2, "row");
-        backup2 = placeWord(tab, res[0][1], p1, p2, "col");
+        backup1 = placeWord(tab, res[index][0], p1, p2, "row");
+        backup2 = placeWord(tab, res[index][1], p1, p2, "col");
+
+        console.log("backup1", backup1);
+        console.log("backup2", backup2);
       } else {
         backup = placeWord(tab, word, p1, p2, "row");
+        console.log("backup", backup);
       }
-      console.log("backup", backup);
       if (
         solvePuzzle(
           tab,
-          words.filter((w) => w != word && w != res[0][1]),
+          words.filter((w) => {
+            if (screen[p1][p2] == "2") {
+              return w != res[index][0] && w != res[index][1]
+            }
+            return w != word
+          }),
           screen,
           nextP1,
           nextP2
@@ -119,17 +144,17 @@ const solvePuzzle = (tab, words, screen, p1, p2) => {
         return true;
       }
       if (screen[p1][p2] == "2") {
-        placeWord(tab, backup1, p1, p2, "row");
-        placeWord(tab, backup2, p1, p2, "col");
+        placeWordBack(tab, backup1, p1, p2, "row");
+        placeWordBack(tab, backup2, p1, p2, "col");
       } else {
-        placeWord(tab, backup, p1, p2, "row");
+        placeWordBack(tab, backup, p1, p2, "row");
       }
       backup = [];
       backup1 = [];
       backup2 = [];
     }
 
-    if (canPlace(tab, word, p1, p2, "col")) {
+    if (canPlace(tab, screen, word, p1, p2, "col")) {
       let backup = [];
       let backup1 = [];
       let backup2 = [];
@@ -138,17 +163,23 @@ const solvePuzzle = (tab, words, screen, p1, p2) => {
         //
 
         //
-        backup1 = placeWord(tab, res[0][1], p1, p2, "row");
-        backup2 = placeWord(tab, res[0][0], p1, p2, "col");
+        backup1 = placeWord(tab, res[index][1], p1, p2, "row");
+        backup2 = placeWord(tab, res[index][0], p1, p2, "col");
+        console.log("backup1", backup1);
+        console.log("backup2", backup2);
       } else {
         backup = placeWord(tab, word, p1, p2, "col");
+        console.log("backup", backup);
       }
-      backup1 = [];
-      backup2 = [];
       if (
         solvePuzzle(
           tab,
-          words.filter((w) => w != res[0][1] && w != word),
+          words.filter((w) => {
+            if (screen[p1][p2] == "2") {
+              return w != res[index][0] && w != res[index][1]
+            }
+            return w != word
+          }),
           screen,
           nextP1,
           nextP2
@@ -156,15 +187,16 @@ const solvePuzzle = (tab, words, screen, p1, p2) => {
       )
         return true;
       if (screen[p1][p2] == "2") {
-        placeWord(tab, backup1, p1, p2, "col");
-        placeWord(tab, backup2, p1, p2, "col");
+        placeWordBack(tab, backup1, p1, p2, "row");
+        placeWordBack(tab, backup2, p1, p2, "col");
       } else {
-        placeWord(tab, backup, p1, p2, "col");
+        placeWordBack(tab, backup, p1, p2, "col");
       }
       backup = [];
       backup1 = [];
       backup2 = [];
     }
+    index++
   }
 
   return false; // No solution found
