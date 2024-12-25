@@ -1,5 +1,29 @@
 let results = [];
 
+const puzzle = '2001\n0..0\n1000\n0..0'
+const words = ['aaab', 'aaac', 'aaad', 'aaae']
+
+const validList = (list) => {
+  const unique = new Set(list)
+  return [...unique].length === list.length
+}
+
+const validParams = (puzzle, list) => {
+  return ((typeof puzzle === "string") && (list instanceof Array))
+}
+
+const validLine = (line, list) => {
+  const exp = /^[201.]+$/
+  let count = 0
+  for (let elem of line.split('\n')) {
+    if (!exp.test(elem)) {
+      return false
+    }
+    [...elem].map(num => num !== '.' ? count += +num : 0)
+  }
+  return (count === list.length)
+}
+
 const canPlace = (tab, screen, word, p1, p2, direction) => {
   if (direction === "row") {
     if (p2 + word.length > tab[0].length) return false;
@@ -179,7 +203,7 @@ const solvePuzzle = (tab, words, screen, p1, p2) => {
       backup2 = [];
     }
 
-    if (index < len-1) {
+    if (index < len - 1) {
       index++;
     }
   }
@@ -188,6 +212,9 @@ const solvePuzzle = (tab, words, screen, p1, p2) => {
 };
 
 const crosswordSolver = (epuzzle, list) => {
+  if (!validParams(epuzzle, words) || !validList(list) || !validLine(epuzzle, list)) {
+    return console.log("ERROR")
+  }
   let tab = epuzzle.split("\n").map((row) => row.split("")); // 2D array
   let screen = [];
   for (let i = 0; i < tab.length; i++) {
@@ -208,32 +235,12 @@ const crosswordSolver = (epuzzle, list) => {
   solvePuzzle(screen, list, tab, 0, 0);
   if (results.length != 0) {
     console.log(results[0]);
+  } else {
+    console.log("Error")
   }
   return false;
 };
 
-const puzzle = `..1.1..1...
-10000..1000
-..0.0..0...
-..1000000..
-..0.0..0...
-1000..10000
-..0.1..0...
-....0..0...
-..100000...
-....0..0...
-....0......`
-const words = [
-  'popcorn',
-  'fruit',
-  'flour',
-  'chicken',
-  'eggs',
-  'vegetables',
-  'pasta',
-  'pork',
-  'steak',
-  'cheese',
-]
+
 
 crosswordSolver(puzzle, words);
