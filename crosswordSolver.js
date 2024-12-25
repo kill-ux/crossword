@@ -1,15 +1,16 @@
+let results = [];
+
 const canPlace = (tab, screen, word, p1, p2, direction) => {
   if (direction === "row") {
     if (p2 + word.length > tab[0].length) return false;
     for (let i = 0; i < word.length; i++) {
       if (screen[p1][p2 + i] == ".") return false;
       if (tab[p1][p2 + i] != "." && tab[p1][p2 + i] != word[i]) return false;
-
     }
   } else {
-    if (p1 + word.length > tab.length) return false; 
+    if (p1 + word.length > tab.length) return false;
     for (let i = 0; i < word.length; i++) {
-      if (screen[p1 + i][p2] == "." ) return false;
+      if (screen[p1 + i][p2] == ".") return false;
       if (tab[p1 + i][p2] != "." && tab[p1 + i][p2] != word[i]) return false;
     }
   }
@@ -68,26 +69,20 @@ const groupWord = (screen, list, p1, p2) => {
       res = append(res, temp);
     }
   }
-  //
   return res;
 };
-//////////////
 
 const solvePuzzle = (tab, words, screen, p1, p2) => {
-  // if (p1 == 0 && p2 == 4) {
-  //   return true;
-  // }
-
-
   if (p1 == tab.length - 1 && p2 == tab[tab.length - 1].length - 1) {
-    // console.log("finish");
-    // console.log(tab);
-    let solution = tab.map(arr => arr.join('')).join('\n')
-    console.log(solution);
-    return true;
+    let solution = tab.map((arr) => arr.join("")).join("\n");
+    if (results.length == 0) {
+      results = append(results, solution);
+    } else {
+      results = [];
+    }
+    return false;
   }
 
-  //
   let skip = false;
   if (screen[p1][p2] != "0" && screen[p1][p2] != "." && tab[p1][p2] != ".") {
     for (const element of words) {
@@ -99,21 +94,21 @@ const solvePuzzle = (tab, words, screen, p1, p2) => {
       return false;
     }
   }
-  //
 
   const nextP1 = p2 + 1 == tab[0].length ? p1 + 1 : p1;
   const nextP2 = p2 + 1 == tab[0].length ? 0 : p2 + 1;
   if (screen[p1][p2] == "0" || screen[p1][p2] == ".") {
-    return solvePuzzle(tab, words, screen, nextP1, nextP2); // Skip non-fillable spots
+    return solvePuzzle(tab, words, screen, nextP1, nextP2);
   }
   let index = 0;
+  let len = 0;
   for (const word of words) {
-    //tab, screen, word, p1, p2, direction
     if (canPlace(tab, screen, word, p1, p2, "row")) {
       let backup = [];
       let backup1 = [];
       let backup2 = [];
-      let res = groupWord(screen, words, p1, p2); // [[casa,ciao][]]
+      let res = groupWord(screen, words, p1, p2);
+      len = res.length;
       if (screen[p1][p2] == "2") {
         backup1 = placeWord(tab, res[index][0], p1, p2, "row");
         backup2 = placeWord(tab, res[index][1], p1, p2, "col");
@@ -153,9 +148,6 @@ const solvePuzzle = (tab, words, screen, p1, p2) => {
       let backup2 = [];
       let res = groupWord(screen, words, p1, p2);
       if (screen[p1][p2] == "2") {
-        //
-
-        //
         backup1 = placeWord(tab, res[index][1], p1, p2, "row");
         backup2 = placeWord(tab, res[index][0], p1, p2, "col");
       } else {
@@ -186,10 +178,13 @@ const solvePuzzle = (tab, words, screen, p1, p2) => {
       backup1 = [];
       backup2 = [];
     }
-    index++;
+
+    if (index < len-1) {
+      index++;
+    }
   }
 
-  return false; // No solution found
+  return false;
 };
 
 const crosswordSolver = (epuzzle, list) => {
@@ -210,39 +205,35 @@ const crosswordSolver = (epuzzle, list) => {
       return false;
     }
   }
-  if (solvePuzzle(screen, list, tab, 0, 0)) {
-    return true;
+  solvePuzzle(screen, list, tab, 0, 0);
+  if (results.length != 0) {
+    console.log(results[0]);
   }
-
   return false;
 };
 
-const puzzle = `...1...........
-..1000001000...
-...0....0......
-.1......0...1..
-.0....100000000
-100000..0...0..
-.0.....1001000.
-.0.1....0.0....
-.10000000.0....
-.0.0......0....
-.0.0.....100...
-...0......0....
-..........0....`
+const puzzle = `..1.1..1...
+10000..1000
+..0.0..0...
+..1000000..
+..0.0..0...
+1000..10000
+..0.1..0...
+....0..0...
+..100000...
+....0..0...
+....0......`
 const words = [
-  'sunglasses',
-  'sun',
-  'suncream',
-  'swimming',
-  'bikini',
-  'beach',
-  'icecream',
-  'tan',
-  'deckchair',
-  'sand',
-  'seaside',
-  'sandals',
+  'popcorn',
+  'fruit',
+  'flour',
+  'chicken',
+  'eggs',
+  'vegetables',
+  'pasta',
+  'pork',
+  'steak',
+  'cheese',
 ]
 
-crosswordSolver(puzzle, words)
+crosswordSolver(puzzle, words);
