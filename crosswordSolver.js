@@ -78,27 +78,24 @@ const solvePuzzle = (tab, words, screen, p1, p2) => {
   //   return true;
   // }
 
-  console.log("#################");
-  console.log(tab, words, screen, p1, p2);
-  console.log("#################");
 
   if (p1 == tab.length - 1 && p2 == tab[tab.length - 1].length - 1) {
-    console.log("finish");
-    console.log(tab);
+    // console.log("finish");
+    // console.log(tab);
+    let solution = tab.map(arr => arr.join('')).join('\n')
+    console.log(solution);
     return true;
   }
 
   //
   let skip = false;
   if (screen[p1][p2] != "0" && screen[p1][p2] != "." && tab[p1][p2] != ".") {
-    console.log("lllllllllllllllllll");
     for (const element of words) {
       if (element[0] == tab[p1][p2]) {
         skip = true;
       }
     }
     if (!skip) {
-      console.log("jjj");
       return false;
     }
   }
@@ -109,8 +106,6 @@ const solvePuzzle = (tab, words, screen, p1, p2) => {
   if (screen[p1][p2] == "0" || screen[p1][p2] == ".") {
     return solvePuzzle(tab, words, screen, nextP1, nextP2); // Skip non-fillable spots
   }
-
-  console.log("das hna");
   let index = 0;
   for (const word of words) {
     //tab, screen, word, p1, p2, direction
@@ -120,7 +115,6 @@ const solvePuzzle = (tab, words, screen, p1, p2) => {
       let backup2 = [];
       let res = groupWord(screen, words, p1, p2); // [[casa,ciao][]]
       if (screen[p1][p2] == "2") {
-        console.log(res)
         backup1 = placeWord(tab, res[index][0], p1, p2, "row");
         backup2 = placeWord(tab, res[index][1], p1, p2, "col");
       } else {
@@ -223,10 +217,32 @@ const crosswordSolver = (epuzzle, list) => {
   return false;
 };
 
-const emptyPuzzle = `201..
-1010.
-0.0..
-0.100`;
-const words = ["cat", "ceil", "ears", "rap", "trap", "pit"];
+const puzzle = `...1...........
+..1000001000...
+...0....0......
+.1......0...1..
+.0....100000000
+100000..0...0..
+.0.....1001000.
+.0.1....0.0....
+.10000000.0....
+.0.0......0....
+.0.0.....100...
+...0......0....
+..........0....`
+const words = [
+  'sunglasses',
+  'sun',
+  'suncream',
+  'swimming',
+  'bikini',
+  'beach',
+  'icecream',
+  'tan',
+  'deckchair',
+  'sand',
+  'seaside',
+  'sandals',
+]
 
-crosswordSolver(emptyPuzzle, words);
+crosswordSolver(puzzle, words)
