@@ -114,10 +114,10 @@ const solvePuzzle = (tab, words, screen, x, y) => {
     }
   }
 
-  const nextP1 = y + 1 == tab[0].length ? x + 1 : x;
-  const nextP2 = y + 1 == tab[0].length ? 0 : y + 1;
+  const nextX = y + 1 == tab[0].length ? x + 1 : x;
+  const nextY = y + 1 == tab[0].length ? 0 : y + 1;
   if (screen[x][y] == "0" || screen[x][y] == ".") {
-    return solvePuzzle(tab, words, screen, nextP1, nextP2);
+    return solvePuzzle(tab, words, screen, nextX, nextY);
   }
   let index = 0;
   let len = 0;
@@ -144,8 +144,8 @@ const solvePuzzle = (tab, words, screen, x, y) => {
             return w != word;
           }),
           screen,
-          nextP1,
-          nextP2
+          nextX,
+          nextY
         )
       ) {
         return true;
@@ -181,8 +181,8 @@ const solvePuzzle = (tab, words, screen, x, y) => {
             return w != word;
           }),
           screen,
-          nextP1,
-          nextP2
+          nextX,
+          nextY
         )
       )
         return true;
