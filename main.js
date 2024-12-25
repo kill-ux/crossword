@@ -1,127 +1,93 @@
-// const puzzle = `2001
-// 0..0
-// 1000
-// 0..0`
-const puzzle = ''
-const words = 123
-// const words = ['casa', 'ciao', 'alan', 'anta']
-// const puzzle = `...1...........
-// ..1000001000...
-// ...0....0......
-// .1......0...1..
-// .0....100000000
-// 100000..0...0..
-// .0.....1001000.
-// .0.1....0.0....
-// .10000000.0....
-// .0.0......0....
-// .0.0.....100...
-// ...0......0....
-// ..........0....`
-// const words = [
-//     'sun',
-//     'sunglasses',
-//     'suncream',
-//     'swimming',
-//     'bikini',
-//     'beach',
-//     'icecream',
-//     'tan',
-//     'deckchair',
-//     'sand',
-//     'seaside',
-//     'sandals',
-// ]
+const emptyPuzzle = `2001
+0..0
+1000
+0..0`
+const words = ['alan','casa', 'ciao', 'anta']
+
 let details = {}
 
-const validList = (list) => {
+const validPzzl = (list) => {
     const unique = new Set(list)
-    return [...unique].length === list.length
+    const arrLen = [...unique].map(elem => elem.length)
+    return arrLen.length === list.length ? Math.max(...arrLen) : 0
 }
 
-const validParams = (puzzle, list) => {
-    return ((typeof puzzle === "string") && (list instanceof Array))
+const validParams = (emptyP, list) => {
+    return ((typeof emptyP === "string") && (list instanceof Array))
 }
-const validLine = (line) => {
-    const exp = /^[201.]+$/
-    for (let elem of line.split('\n')) {
-        if (!exp.test(elem)) {
-            return false
+
+const catchError = (emptyP, list) => {
+    const exp = /^[.201]+$/
+    emptyP = emptyP.split("\n")
+    const lineLen = emptyP[0].length
+    console.log(emptyP[0], emptyP)
+    for (const line of emptyP) {
+        if (!exp.test(line)) {
+            return "Error"
+        }
+        if (lineLen !== line.length) {
+            return "Error"
+        }
+        const wrdLen = validPzzl(list)
+        if ((wrdLen > line.length) || (wrdLen === 0) || (list.length > emptyP.length)) {
+            console.log('test')
+            return "Error"
         }
     }
-    return true
+    return
 }
-console.log("test ", validLine('2071'))
-
-const createGrid = (puzzle) => {
-    // let maxRow = puzzle.length
-    // let maxCol = puzzle[0].length
-    details.wordsInfo.forEach((detail, index) => {
+const createGrid = () => {
+    let maxRow = 4
+    let maxCol = 4
+    const baseGrid = Array.from({ length: maxRow }, () => Array(maxCol).fill('.'))
+    details.freeSlots.forEach((detail, index) => {
         const word = words[index]
         switch (true) {
             case (detail.direction === 'H'):
                 for (let i = 0; i < detail.len; i++) {
-                    puzzle[detail.row][detail.col + i] = word[i]
+                    baseGrid[detail.row][detail.col + i] = word[i]
                 }
                 break
             case detail.direction === 'V':
                 for (let i = 0; i < detail.len; i++) {
-                    puzzle[detail.row + i][detail.col] = word[i]
+                    baseGrid[detail.row + i][detail.col] = word[i]
                 }
                 break
         }
     })
-    return puzzle
+    return baseGrid
 }
-
-const isValidSlot = (words, wordLen, base) => {
-    let count = 0
-    let arr = []
-    details.startChar = {}
-    if (wordLen >= 2) {
-        for (let i = 0; i < words.length; i++) {
-            const first = words[i][0]
-            if (!details.startChar[first]) {
-                details.startChar[first] = []
-            }
-            details.startChar[first].push(words[i])
-            if (wordLen == words[i].length) {
-                count++
-                arr.push(words[i])
-            }
-        }
-        if (count > 0) {
-            console.log(details.startChar)
-            return true
-        }
-
-    }
+const isValidSlot = (words, slotLen) => {
+    // let count = 0
+    // if (slotLen >= 2) {
+    //     for (let i = 0; i < words.length; i++) {
+    //         if (slotLen == words[i].length) {
+    //             count++
+    //         }
+    //     }
+    //     if (count > 0) {
+    //         return true
+    //     }
+    // }
+    
     return false
 }
-
-const printGrid = (grid) => {
-    return grid.map(row => row.join('')).join('\n')
-}
-
-const crosswordSolver = (puzzle, words) => {
-    if (!validParams(puzzle, words) || !validList(words) || !validLine(puzzle)) {
-        return console.log("ERROR")
-    }
-    details.wordsInfo = []
-    const splitPuzzle = puzzle.split("\n").map(row => row.split(''))
-    console.log(splitPuzzle)
-    let rows = splitPuzzle.length
-    let cols = splitPuzzle[0].length
+const crosswordSolver = (emptyPuzzle, words) => {
+    details.freeSlots = []
+    puzzle = emptyPuzzle.split("\n").map(row => row.split(''))
+    console.log(puzzle)
+    let rows = puzzle.lengthyw
+    let cols = puzzle[0].length
     for (let i = 0; i < rows; i++) {
         for (let j = 0; j < cols; j++) {
             let hLength = 0
             let startCol = j
-            while (startCol < cols && (splitPuzzle[i][startCol] !== '.')) {
+            while (startCol < cols && (puzzle[i][startCol] !== '.')) {
                 hLength++
                 startCol++
             }
-            if (isValidSlot(words, hLength, splitPuzzle)) {
-                details.wordsInfo.push({
+            if (isValidSlot(words, hLength)) {
+                details.freeSlots.push({
                     row: i,
                     col: j,
                     len: hLength,
@@ -130,12 +96,12 @@ const crosswordSolver = (puzzle, words) => {
             }
             let vLength = 0
             let startRow = i
-            while (startRow < rows && (splitPuzzle[startRow][j] !== '.')) {
+            while (startRow < rows && (puzzle[startRow][j] !== '.')) {
                 vLength++
                 startRow++
             }
-            if (isValidSlot(words, vLength, splitPuzzle)) {
-                details.wordsInfo.push({
+            if (isValidSlot(words, vLength)) {
+                details.freeSlots.push({
                     row: i,
                     col: j,
                     len: vLength,
@@ -144,11 +110,10 @@ const crosswordSolver = (puzzle, words) => {
             }
         }
     }
-    console.log("details ", details.wordsInfo)
-    console.log(createGrid(splitPuzzle))
-    console.log(printGrid(createGrid(splitPuzzle)))
+    console.log("details ", details.freeSlots)
+    console.log(createGrid())
     // createGrid()
 }
 
 
-crosswordSolver(puzzle, words)
+crosswordSolver(emptyPuzzle, words)

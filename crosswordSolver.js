@@ -1,17 +1,12 @@
 let results = [];
 
-const puzzle = '2001\n0..0\n1000\n0..0'
-const words = ['aaab', 'aaac', 'aaad', 'aaae']
-
 const validList = (list) => {
   const unique = new Set(list)
   return [...unique].length === list.length
 }
-
 const validParams = (puzzle, list) => {
   return ((typeof puzzle === "string") && (list instanceof Array))
 }
-
 const validLine = (line, list) => {
   const exp = /^[201.]+$/
   let count = 0
@@ -23,7 +18,6 @@ const validLine = (line, list) => {
   }
   return (count === list.length)
 }
-
 const canPlace = (tab, screen, word, p1, p2, direction) => {
   if (direction === "row") {
     if (p2 + word.length > tab[0].length) return false;
@@ -40,7 +34,6 @@ const canPlace = (tab, screen, word, p1, p2, direction) => {
   }
   return true;
 };
-
 const placeWord = (tab, word, p1, p2, direction) => {
   const backup = [];
   if (direction == "row") {
@@ -56,7 +49,6 @@ const placeWord = (tab, word, p1, p2, direction) => {
   }
   return backup;
 };
-
 const placeWordBack = (tab, word, p1, p2, direction) => {
   if (direction == "row") {
     for (let i = 0; i < word.length; i++) {
@@ -68,11 +60,9 @@ const placeWordBack = (tab, word, p1, p2, direction) => {
     }
   }
 };
-
 const append = (array, ...obj) => {
   return [...array, ...obj];
 };
-
 //////////////
 const groupWord = (screen, list, p1, p2) => {
   let screeList = [...list];
@@ -95,7 +85,6 @@ const groupWord = (screen, list, p1, p2) => {
   }
   return res;
 };
-
 const solvePuzzle = (tab, words, screen, p1, p2) => {
   if (p1 == tab.length - 1 && p2 == tab[tab.length - 1].length - 1) {
     let solution = tab.map((arr) => arr.join("")).join("\n");
@@ -106,7 +95,6 @@ const solvePuzzle = (tab, words, screen, p1, p2) => {
     }
     return false;
   }
-
   let skip = false;
   if (screen[p1][p2] != "0" && screen[p1][p2] != "." && tab[p1][p2] != ".") {
     for (const element of words) {
@@ -118,7 +106,6 @@ const solvePuzzle = (tab, words, screen, p1, p2) => {
       return false;
     }
   }
-
   const nextP1 = p2 + 1 == tab[0].length ? p1 + 1 : p1;
   const nextP2 = p2 + 1 == tab[0].length ? 0 : p2 + 1;
   if (screen[p1][p2] == "0" || screen[p1][p2] == ".") {
@@ -165,7 +152,6 @@ const solvePuzzle = (tab, words, screen, p1, p2) => {
       backup1 = [];
       backup2 = [];
     }
-
     if (canPlace(tab, screen, word, p1, p2, "col")) {
       let backup = [];
       let backup1 = [];
@@ -202,19 +188,17 @@ const solvePuzzle = (tab, words, screen, p1, p2) => {
       backup1 = [];
       backup2 = [];
     }
-
     if (index < len - 1) {
       index++;
     }
   }
-
   return false;
 };
-
 const crosswordSolver = (epuzzle, list) => {
   if (!validParams(epuzzle, words) || !validList(list) || !validLine(epuzzle, list)) {
     return console.log("ERROR")
   }
+  list = list.map(elem => elem.toLowerCase())
   let tab = epuzzle.split("\n").map((row) => row.split("")); // 2D array
   let screen = [];
   for (let i = 0; i < tab.length; i++) {
@@ -225,7 +209,6 @@ const crosswordSolver = (epuzzle, list) => {
     screen[i] = newTab;
   }
   let len = tab[0].length;
-
   for (const row of tab) {
     if (row.length != len) {
       console.log("Error: Rows must be of equal length.");
@@ -238,9 +221,7 @@ const crosswordSolver = (epuzzle, list) => {
   } else {
     console.log("Error")
   }
-  return false;
 };
-
-
-
+const puzzle = '0001\n0..0\n3000\n0..0'
+const words = ['casa', 'alan', 'ciao', 'anta']
 crosswordSolver(puzzle, words);
