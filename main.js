@@ -76,7 +76,7 @@ const crosswordSolver = (emptyPuzzle, words) => {
     details.freeSlots = []
     puzzle = emptyPuzzle.split("\n").map(row => row.split(''))
     console.log(puzzle)
-    let rows = puzzle.lengthyw
+    let rows = puzzle.length
     let cols = puzzle[0].length
     for (let i = 0; i < rows; i++) {
         for (let j = 0; j < cols; j++) {
